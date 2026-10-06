@@ -10,6 +10,9 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
   vite: { plugins: [tailwindcss()] },
 
+  // Always emit plain static files in .output/public, even on Amplify (which otherwise auto-selects its SSR preset).
+  nitro: { preset: 'static' },
+
   site: { url: siteUrl, name: 'Hidayat Utility' },
   runtimeConfig: {
     public: {
