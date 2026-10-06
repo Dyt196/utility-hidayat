@@ -229,6 +229,31 @@ For example:
 - Temperature
 - Create a reusable related-tools component.
 
+### Tool registry and related links (as built)
+
+Check this list before adding a tool. Each purpose has one page; do not create a second page for something an existing tool already covers. Source of truth: `app/utils/tools.ts` (keep this list in sync).
+
+| Tool (`/tools/<slug>`) | Category | Related links | Already covers (don't add separately) |
+| --- | --- | --- | --- |
+| `age-calculator` | Date & time | date-calculator, hijri-converter | age in years/months/days, total days, next birthday |
+| `date-calculator` | Date & time | age-calculator, hijri-converter | days between dates, add/subtract days |
+| `hijri-converter` | Date & time | date-calculator, age-calculator | Gregorian ↔ Hijri conversion (Umm al-Qura) |
+| `percentage-calculator` | Maths | loan-calculator, unit-converter | percent of, what percent, increase/decrease by, percentage change, percentage difference |
+| `loan-calculator` | Finance | stamp-duty-calculator, salary-calculator | monthly repayment, total interest, reducing balance and flat rate |
+| `stamp-duty-calculator` | Finance | loan-calculator, income-tax-calculator | property MOT and loan agreement stamp duty, first-home exemption |
+| `salary-calculator` | Finance | income-tax-calculator, zakat-calculator | take-home pay: EPF, SOCSO, EIS, PCB estimate |
+| `income-tax-calculator` | Finance | salary-calculator, zakat-calculator | resident individual tax by band, rebate, zakat offset |
+| `zakat-calculator` | Finance | income-tax-calculator, salary-calculator | zakat on income, savings, gold with nisab check |
+| `unit-converter` | Converters | bmi-calculator, percentage-calculator | length, weight, temperature |
+| `bmi-calculator` | Health | unit-converter, percentage-calculator | metric and imperial BMI |
+| `json-formatter` | Developer & web | uuid-generator, qr-code-generator | format, minify, validate JSON |
+| `uuid-generator` | Developer & web | json-formatter, qr-code-generator | v4 UUIDs, bulk, uppercase, no hyphens |
+| `qr-code-generator` | Developer & web | uuid-generator, json-formatter | text/URL to PNG QR code |
+
+Rules:
+- New unit types (volume, speed, area...) are added as categories inside `unit-converter`, not as new pages. New date utilities go in `date-calculator`.
+- Every new tool needs an entry in `tools.ts` and in this table, with 2 related tools, and should be linked back from at least one existing tool's `related`.
+
 ## Design
 
 The design should be:
@@ -384,4 +409,29 @@ See README.md for the full structure. Key points:
 - All copy (UI, tool prose, FAQs, legal pages) lives in `app/content/<locale>.ts`, read through `useContent()`. `en.ts` defines the type; `ms.ts` must satisfy it. `@nuxtjs/i18n` is only used for routing, canonical and hreflang.
 - Calculation logic is pure TypeScript in `app/utils/`, covered by `npm test`. Tool components in `app/components/tools/` contain UI only.
 - `app/utils/tools.ts` is the tool registry; `ToolLayout` renders every tool page (SEO, JSON-LD, H1, intro, tool slot, how it works, examples, FAQ, related).
-- Verify changes with `npm run typecheck && npm test && npm run generate`.
+- Verify changes with `npm run lint && npm run typecheck && npm test && npm run generate`.
+
+## Notes: additions and deviations from the original brief
+
+Decisions made while building that go beyond, or differ from, the sections above. Keep them unless the owner says otherwise.
+
+- **Tools beyond the first five:** the owner approved adding Loan (RM), JSON Formatter, UUID Generator and QR Code Generator (these match the tags on the OG image). The "no extra tools" constraint above no longer applies to those; keep new tools deliberate.
+- **Languages:** English (default, no URL prefix) and Bahasa Melayu (`/ms/...`). No browser-language auto-detection, so pages stay static and cookie-free. Both languages must be updated together; `ms.ts` is typed against `en.ts`.
+- **Copy is not in i18n messages:** deliberately kept in `app/content/*.ts` for type safety and simplicity. Both languages are bundled statically; lazy-load per locale if the content grows large.
+- **Percentage Calculator:** has six operations (adds "increase by X%" and "decrease by X%" to the briefed ones).
+- **Unit Converter:** includes a swap button, rejects negative length/weight, and rejects temperatures below absolute zero.
+- **Date Calculator:** supports years 1000–9999 and 0–365,000 days.
+- **BMI Calculator:** uses WHO adult categories; FAQ mentions that some Asian guidelines use lower cut-offs.
+- **Loan Calculator:** offers reducing-balance and flat-rate modes because Malaysian car loans usually quote flat rates. Estimate only; excludes fees and insurance.
+- **QR Code Generator:** the `qrcode` package is dynamically imported in the component so it stays out of other pages' JS. Max 1,000 characters.
+- **Categories:** Date & time, Maths, Finance, Converters, Health, Developer & web (`app/utils/tools.ts` + `categories` in the content files).
+- **Contact page:** shows a mailto only when `NUXT_PUBLIC_CONTACT_EMAIL` is set; otherwise a placeholder. No fake address.
+- **Legal pages:** privacy and terms are plain drafts stating no analytics, cookies or ads. They need review and must be updated before any ads or analytics are added.
+- **Ads/analytics hooks:** `after-tool` slot in `ToolLayout` and an empty `app/plugins/analytics.client.ts`. Nothing is implemented yet.
+- **Tooling:** ESLint (`@nuxt/eslint`), `vue-tsc` typecheck, and Node's built-in test runner for `app/utils` (`npm test`). Tailwind CSS v4 via `@tailwindcss/vite`; Nuxt UI was not used.
+- **SEO:** `@nuxtjs/sitemap` and `@nuxtjs/robots` generate `sitemap.xml` and `robots.txt` (the starter `public/robots.txt` was removed). FAQ structured data is intentionally not used.
+- **Branding:** logo/favicon/OG assets are in `public/`; the head tags are in `nuxt.config.ts`. The theme is stored in `localStorage` only.
+- **Git:** not initialised yet.
+- **Malaysia-focused plan:** the next tools target Malaysia (stamp duty, zakat, salary, income tax, Hijri converter, loan). Keep new tools Malaysia-first.
+- **Statutory rates:** all rates (tax bands, reliefs, stamp duty, EPF/SOCSO/EIS, zakat) live in `app/utils/my-rates.ts` with a `checked` date and `taxYear`. Review them every year and after each Budget, then update the "Rates checked" text shown on pages (it reads from that file) and the examples in `app/content/*.ts` and `tests/calc.test.ts`. Rates were taken from public secondary sources in October 2026, not yet verified against LHDN/KWSP/PERKESO; verify before relying on them.
+- **Estimate caveats:** the salary calculator approximates SOCSO with a percentage and assumes a single employee with no other reliefs for PCB. Zakat deduction rules vary by state. The Hijri converter uses Umm al-Qura, which can differ by a day from Malaysia's moon-sighting calendar.
