@@ -19,7 +19,7 @@ usePageSeo({
 <template>
   <div class="space-y-10">
     <div>
-      <Breadcrumbs :items="[{ label: c.nav.homeCrumb, to: localePath('/') }, { label: c.nav.tools }]" />
+      <BreadcrumbNav :items="[{ label: c.nav.homeCrumb, to: localePath('/') }, { label: c.nav.tools }]" />
       <h1 class="text-3xl font-bold sm:text-4xl">{{ p.h1 }}</h1>
       <p class="mt-3 max-w-2xl text-lg text-muted">{{ p.intro }}</p>
     </div>

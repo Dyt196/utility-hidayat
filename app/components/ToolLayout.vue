@@ -46,7 +46,7 @@ usePageSeo({
 <template>
   <article class="space-y-12">
     <div>
-      <Breadcrumbs :items="crumbs" />
+      <BreadcrumbNav :items="crumbs" />
       <h1 class="text-3xl font-bold sm:text-4xl">{{ t.h1 }}</h1>
       <p class="mt-3 max-w-2xl text-lg text-muted">{{ t.intro }}</p>
     </div>
