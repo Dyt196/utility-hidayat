@@ -1,0 +1,50 @@
+@import 'tailwindcss';
+
+:root {
+  --bg: #f4efe6;
+  --surface: #fffdf8;
+  --fg: #14213d;
+  --muted: #4b5568;
+  --border: #d9d1c1;
+  --accent: #f5a524;
+  --accent-fg: #14213d;
+  --link: #14213d;
+  --danger: #b42318;
+  color-scheme: light;
+}
+.dark {
+  --bg: #0d1426;
+  --surface: #14213d;
+  --fg: #f4efe6;
+  --muted: #b4bccb;
+  --border: #2c3a5c;
+  --link: #f5a524;
+  --danger: #ff8a7a;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-line: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-link: var(--link);
+  --color-danger: var(--danger);
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+html { scroll-padding-top: 5rem; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-sans); line-height: 1.6; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.dark :focus-visible { outline-color: #fff; }
+
+/* Long-form text on tool pages */
+.prose-block p { margin-top: .75rem; max-width: 70ch; }
+.prose-block a, .link { color: var(--link); text-decoration: underline; text-underline-offset: 3px; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
