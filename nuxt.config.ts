@@ -4,7 +4,7 @@ const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || 'https://utility.hidayat.my'
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  modules: ['@nuxtjs/i18n', '@nuxtjs/sitemap', '@nuxtjs/robots'],
+  modules: ['@nuxt/eslint', '@nuxtjs/i18n', '@nuxtjs/sitemap', '@nuxtjs/robots'],
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
   css: ['~/assets/css/main.css'],
